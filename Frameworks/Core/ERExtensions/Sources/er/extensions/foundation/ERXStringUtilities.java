@@ -2324,7 +2324,11 @@ public class ERXStringUtilities {
 				stripped = stripped.replaceAll("&#174;", "(C)");
 				stripped = stripped.replaceAll("&#174;", "(R)");
 				stripped = stripped.replaceAll("&#8482;", "(TM)");
-			stripped = stripped.trim();
+				stripped = stripped.replaceAll("&amp;amp;", "&");
+				stripped = stripped.replaceAll("&amp;nbsp;", " ");
+				stripped = stripped.replaceAll("&amp;", "&");
+				stripped = stripped.replaceAll("&nbsp;", " ");
+				stripped = stripped.trim();
 			}
  		}
  		return stripped;
