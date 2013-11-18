@@ -342,11 +342,11 @@ public class _FrontBasePlugIn extends JDBCPlugIn {
 		// MS: This is weird, but to allow for people to build FrontBasePlugIn without actually
 		// having the FrontBase JDBC driver installed, I've switched these two calls to be reflection.
 		try {
-			switch (internalTypeForExternal(((EOAttribute) attribute).externalType())) {
-			case FB_BLOB:
+			switch (FrontBaseTypes.internalTypeForExternal(((EOAttribute) attribute).externalType())) {
+			case FrontBaseTypes.FB_BLOB:
 				Method writeBLOBBytes = con.getClass().getMethod("writeBLOB", new Class[] { byte[].class });
 				return (String) writeBLOBBytes.invoke(con, new Object[] { ((NSData) value).bytes() });
-			case FB_CLOB:
+			case FrontBaseTypes.FB_CLOB:
 				Method writeCLOBString = con.getClass().getMethod("writeCLOB", new Class[] { String.class });
 				return (String) writeCLOBString.invoke(con, new Object[] { (String) value });
 			default:
@@ -494,28 +494,51 @@ public class _FrontBasePlugIn extends JDBCPlugIn {
 		return pksGenerated;
 	}
 
+	@Deprecated
 	protected static final int FB_Boolean = 1;
+	@Deprecated
 	protected static final int FB_Integer = 2;
+	@Deprecated
 	protected static final int FB_SmallInteger = 3;
+	@Deprecated
 	protected static final int FB_Float = 4;
+	@Deprecated
 	protected static final int FB_Real = 5;
+	@Deprecated
 	protected static final int FB_Double = 6;
+	@Deprecated
 	protected static final int FB_Numeric = 7;
+	@Deprecated
 	protected static final int FB_Decimal = 8;
+	@Deprecated
 	protected static final int FB_Character = 9;
+	@Deprecated
 	protected static final int FB_VCharacter = 10;
+	@Deprecated
 	protected static final int FB_Bit = 11;
+	@Deprecated
 	protected static final int FB_VBit = 12;
+	@Deprecated
 	protected static final int FB_Date = 13;
+	@Deprecated
 	protected static final int FB_Time = 14;
+	@Deprecated
 	protected static final int FB_TimeTZ = 15;
+	@Deprecated
 	protected static final int FB_Timestamp = 16;
+	@Deprecated
 	protected static final int FB_TimestampTZ = 17;
+	@Deprecated
 	protected static final int FB_YearMonth = 18;
+	@Deprecated
 	protected static final int FB_DayTime = 19;
+	@Deprecated
 	protected static final int FB_CLOB = 20;
+	@Deprecated
 	protected static final int FB_BLOB = 21;
+	@Deprecated
 	protected static final int FB_TinyInteger = 22;
+	@Deprecated
 	protected static final int FB_LongInteger = 23;
 
 	protected static String notNullConstraintName(EOAttribute attribute) {
@@ -541,6 +564,10 @@ public class _FrontBasePlugIn extends JDBCPlugIn {
 			return "\"" + s.substring(0, i) + "\".\"" + s.substring(i + 1, s.length()) + "\"";
 	}
 
+	/**
+	 * @deprecated user {@link FrontBaseTypes#internalTypeForExternal(String)} instead
+	 */
+	@Deprecated
 	protected static int internalTypeForExternal(String externalType) {
 		String upperExternalType = externalType.toUpperCase();
 		if (upperExternalType.equals("BOOLEAN"))
@@ -992,9 +1019,9 @@ public class _FrontBasePlugIn extends JDBCPlugIn {
 		}
 
 		private String statementToCreateDataTypeClause(EOSchemaSynchronization.ColumnTypes columntypes) {
-			switch (internalTypeForExternal(columntypes.name())) {
-			case FB_Decimal:
-			case FB_Numeric:
+			switch (FrontBaseTypes.internalTypeForExternal(columntypes.name())) {
+			case FrontBaseTypes.FB_Decimal:
+			case FrontBaseTypes.FB_Numeric:
 				int j = columntypes.precision();
 				if (j == 0)
 					return columntypes.name();
@@ -1004,11 +1031,11 @@ public class _FrontBasePlugIn extends JDBCPlugIn {
 				else
 					return columntypes.name() + "(" + j + "," + k + ")";
 
-			case FB_Float:
-			case FB_Bit:
-			case FB_VBit:
-			case FB_Character:
-			case FB_VCharacter:
+			case FrontBaseTypes.FB_Float:
+			case FrontBaseTypes.FB_Bit:
+			case FrontBaseTypes.FB_VBit:
+			case FrontBaseTypes.FB_Character:
+			case FrontBaseTypes.FB_VCharacter:
 				int l = columntypes.width();
 				if (l == 0)
 					l = columntypes.precision();
@@ -1016,7 +1043,7 @@ public class _FrontBasePlugIn extends JDBCPlugIn {
 					return columntypes.name();
 				else
 					return columntypes.name() + "(" + l + ")";
-			case FB_Timestamp:
+			case FrontBaseTypes.FB_Timestamp:
 				int m = columntypes.precision();
 				if (m == 0)
 					return columntypes.name();
@@ -1609,8 +1636,8 @@ public class _FrontBasePlugIn extends JDBCPlugIn {
 		}
 
 		private boolean isLOBAttribute(EOAttribute att) {
-			int internalType = internalTypeForExternal(att.externalType());
-			return internalType == FB_BLOB || internalType == FB_CLOB;
+			int internalType = FrontBaseTypes.internalTypeForExternal(att.externalType());
+			return internalType == FrontBaseTypes.FB_BLOB || internalType == FrontBaseTypes.FB_CLOB;
 		}
 
 		@Override
@@ -1705,16 +1732,16 @@ public class _FrontBasePlugIn extends JDBCPlugIn {
 					throw new EOGeneralAdaptorException("Attribute " + eoattribute.name() + " on entity " + eoattribute.entity().name() + " with prototype named " + eoattribute.prototypeName() + " has no external type defined");
 				}
 
-				switch (internalTypeForExternal(eoattribute.externalType())) {
-				case FB_Character:
-				case FB_VCharacter: {
+				switch (FrontBaseTypes.internalTypeForExternal(eoattribute.externalType())) {
+				case FrontBaseTypes.FB_Character:
+				case FrontBaseTypes.FB_VCharacter: {
 					return escapedString(obj);
 				}
-				case FB_DayTime: {
+				case FrontBaseTypes.FB_DayTime: {
 					return escapedString(obj);
 				}
-				case FB_BLOB:
-				case FB_CLOB: {
+				case FrontBaseTypes.FB_BLOB:
+				case FrontBaseTypes.FB_CLOB: {
 					if (!(obj instanceof String) && eoattribute.valueFactoryMethod() != null) {
 						Class valueClass = _NSUtilities.classWithName(eoattribute.className());
 						if (valueClass.isAssignableFrom(obj.getClass())) {
@@ -1730,8 +1757,8 @@ public class _FrontBasePlugIn extends JDBCPlugIn {
 					_lobList.addObject(obj);
 					return "NULL";
 				}
-				case FB_VBit:
-				case FB_Bit: {
+				case FrontBaseTypes.FB_VBit:
+				case FrontBaseTypes.FB_Bit: {
 					if (obj instanceof NSData) {
 						return formatBit((NSData) obj);
 					}
@@ -1739,7 +1766,7 @@ public class _FrontBasePlugIn extends JDBCPlugIn {
 						return "ERROR: Can not convert value from " + obj + " to Bit or Byte data type";
 					}
 				}
-				case FB_Time: {
+				case FrontBaseTypes.FB_Time: {
 					StringBuffer time = new StringBuffer("TIME '");
 					Date d = (Date)eoattribute.adaptorValueByConvertingAttributeValue(obj);
 					SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.SSS");
@@ -1748,7 +1775,7 @@ public class _FrontBasePlugIn extends JDBCPlugIn {
 					return time.toString();
 				}
 
-				case FB_TimeTZ: {
+				case FrontBaseTypes.FB_TimeTZ: {
 					StringBuffer time = new StringBuffer("TIME '");
 					Date d = (Date)eoattribute.adaptorValueByConvertingAttributeValue(obj);
 					SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss.SSS");
@@ -1758,7 +1785,7 @@ public class _FrontBasePlugIn extends JDBCPlugIn {
 					return time.toString();
 				}
 
-				case FB_Timestamp: {
+				case FrontBaseTypes.FB_Timestamp: {
 					StringBuffer time = new StringBuffer("TIMESTAMP '");
 					Date d = (Date)eoattribute.adaptorValueByConvertingAttributeValue(obj);
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
@@ -1766,7 +1793,7 @@ public class _FrontBasePlugIn extends JDBCPlugIn {
 					time.append("'");
 					return time.toString();
 				}
-				case FB_TimestampTZ: {
+				case FrontBaseTypes.FB_TimestampTZ: {
 					StringBuffer time = new StringBuffer("TIMESTAMP '");
 					Date d = (Date)eoattribute.adaptorValueByConvertingAttributeValue(obj);
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
@@ -1775,7 +1802,7 @@ public class _FrontBasePlugIn extends JDBCPlugIn {
 					time.append("'");
 					return time.toString();
 				}
-				case FB_Date: {
+				case FrontBaseTypes.FB_Date: {
 					StringBuffer time = new StringBuffer("DATE '");
 					Date d = (Date)eoattribute.adaptorValueByConvertingAttributeValue(obj);
 					SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -1783,7 +1810,7 @@ public class _FrontBasePlugIn extends JDBCPlugIn {
 					time.append("'");
 					return time.toString();
 				}
-				case FB_Boolean: {
+				case FrontBaseTypes.FB_Boolean: {
 					if (obj instanceof Boolean) {
 						return obj.toString();
 					}
@@ -1809,15 +1836,15 @@ public class _FrontBasePlugIn extends JDBCPlugIn {
 						return "TRUE";
 					}
 				}
-				case FB_SmallInteger:
-				case FB_Float:
-				case FB_Real:
-				case FB_Double:
-				case FB_LongInteger:
-				case FB_TinyInteger:
-				case FB_Numeric:
-				case FB_Integer:
-				case FB_Decimal: {
+				case FrontBaseTypes.FB_SmallInteger:
+				case FrontBaseTypes.FB_Float:
+				case FrontBaseTypes.FB_Real:
+				case FrontBaseTypes.FB_Double:
+				case FrontBaseTypes.FB_LongInteger:
+				case FrontBaseTypes.FB_TinyInteger:
+				case FrontBaseTypes.FB_Numeric:
+				case FrontBaseTypes.FB_Integer:
+				case FrontBaseTypes.FB_Decimal: {
 					if (obj instanceof BigDecimal) {
 						return ((BigDecimal) obj).setScale(eoattribute.scale(), BigDecimal.ROUND_HALF_UP).toString();
 					}
