@@ -115,8 +115,8 @@
         }, 
         {
             columnName = ""; 
-            externalType = bool; 
-            factoryMethodArgumentType = EOFactoryMethodArgumentIsNSString; 
+            externalType = int4; 
+            factoryMethodArgumentType = EOFactoryMethodArgumentIsBytes; 
             name = intBoolean; 
             valueClassName = NSNumber; 
             valueType = c; 
