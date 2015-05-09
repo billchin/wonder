@@ -246,7 +246,7 @@ public class ERXConfigurationManager {
             }
             else {
                 if (WOApplication.application() != null) {
-                    StringBuffer appSpecificTouchFile = new StringBuffer();
+                    StringBuilder appSpecificTouchFile = new StringBuilder();
                     
                     appSpecificTouchFile.append(propertiesTouchFile.substring(0, appNamePlaceHolderIndex + 1));
                     appSpecificTouchFile.append(WOApplication.application().name());
@@ -255,7 +255,7 @@ public class ERXConfigurationManager {
                     registerForFileNotification(appSpecificTouchFile.toString(), "updateAllSystemProperties");
                 }
                 
-                StringBuffer globalTouchFile = new StringBuffer();
+                StringBuilder globalTouchFile = new StringBuilder();
                 
                 globalTouchFile.append(propertiesTouchFile.substring(0, appNamePlaceHolderIndex + 1));
                 globalTouchFile.append(propertiesTouchFile.substring(appNamePlaceHolderIndex + appNamePlaceHolder.length()));
@@ -398,7 +398,7 @@ public class ERXConfigurationManager {
     }    
     
     /**
-     * Checks if the application is deployed as a servlet.
+     * Checks if the application <del>is</del> may be deployed as a servlet.
      * <p>
      * The current implementation only checks if the application  
      * is linked against <code>JavaWOJSPServlet.framework</code>. 
